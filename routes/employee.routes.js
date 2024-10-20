@@ -8,6 +8,8 @@ router.post("/add_student",authentication, employee_Controller.add_student);
 router.get("/get_student/:student_ID", employee_Controller.get_Student);
 router.get("/get_All_students_with_Custom_Academic_year",authentication, 
     employee_Controller.get_All_students_with_Custom_Academic_year);
+router.get("/get_All_Students_for_All_Branches", 
+    employee_Controller.get_All_Students_for_All_Branches);
 router.put("/update_student/:student_ID", employee_Controller.update_Student);
 router.delete("/delete_student/:student_ID", employee_Controller.delete_Student);
 router.patch("/Update_Image/:student_ID", uploading.img_Uploading().single("application"), 

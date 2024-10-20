@@ -4,7 +4,7 @@ const employee_model = require("../models/employee.model")
 const course_model = require("../models/course.model");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
-const remove_file = require("../Services/remove_file_when_update.service")
+const remove_file = require("../Services/remove_file_when_update.service");
 
 const employee_Controller = {
     //student 
@@ -36,35 +36,56 @@ const employee_Controller = {
             res.status(500).json({ status: "failed", message: error.message });
         }
     },
-    get_All_students_with_Custom_Academic_year: async (req, res) => {
+    get_All_Students_for_All_Branches: async (req, res) => {
         try {
             const { Academic_year } = req.body;
             if (!Academic_year) {
-                const all_students = await student_model.find({branch :req.user.branch})
-                if (all_students.length === 0) {
-                    return res.status(404).send("no projects founded ")
+                var all_students = await student_model.find().select("Name national_ID Academic_year");
+                if (all_students.length === 0) { 
+                    return res.status(404).send(" لا يوجد طلاب للفروع")
                 }
-                const students_count = await student_model.countDocuments({branch : req.user.branch });
+                var students_count = await student_model.countDocuments({});
+            }else{
+                var all_students = await student_model.find({Academic_year: Academic_year})
+                    .select("Name national_ID Academic_year");
+                if (all_students.length === 0) {
+                    return res.status(404).send(" لا يوجد طلاب بهذا العام")
+                }
+                var students_count = await student_model.countDocuments({Academic_year: Academic_year});
+            }
+            return res.status(200).send({
+                number_of_students : students_count,
+                all_students_for_all_brances : all_students
+            });
+        } catch (error) {
+            res.status(500).json({ status: "failed", message: error.message });
+        }
+    },
+    get_All_students_with_Custom_Academic_year: async (req, res) => {
+        try {
+            const { branch , Academic_year } = req.body;
+            if (!Academic_year) {
+                var all_students = await student_model.find({branch :branch})
+                    .select("Name national_ID Academic_year");
+                if (all_students.length === 0) {
+                    return res.status(404).send(" لا يوجد طلاب لهذا الفرع")
+                }
+                var students_count = await student_model.countDocuments({branch :branch });
                 // const countsByCity = await student_model.aggregate([
                 //     { $group: { _id: '$Academic_year', count: { $count: {} } } }
                 // ]);
-                return res.status(200).send({
-                    number_of_students : students_count, students_data: all_students 
-                });
+            }else{
+                var all_students = await student_model.find({branch : branch ,Academic_year: Academic_year})
+                    .select("Name national_ID Academic_year");
+                if (all_students.length === 0) {
+                    return res.status(404).send("no students founded ")
+                }
+                var students_count = await student_model.countDocuments({branch : branch ,Academic_year: Academic_year});
             }
-            
-            const all_students_by_Academic_year = await student_model.find({branch : req.user.branch ,Academic_year: Academic_year});
-            if (all_students_by_Academic_year.length === 0) {
-                return res.status(404).send("no students founded ")
-            }
-
-            const students_count_With_Academic_year = await student_model.countDocuments({branch : req.user.branch ,Academic_year: Academic_year});
-
             return res.status(200).send({
-                number_of_students : students_count_With_Academic_year,
-                students_data : all_students_by_Academic_year
+                number_of_students : students_count,
+                students_data : all_students
             });
-
         } catch (error) {
             res.status(500).send({ message: error.message });
         }
@@ -96,18 +117,16 @@ const employee_Controller = {
         try {
             const {student_ID} = req.params;
             const new_national_ID = req.body.national_ID;
-
-            const purposed_student = await student_model.findById(student_ID);
-            if (!purposed_student) {
-                return res.status(404).send({ message: "لم يتم العثور على الطالب بهذا المعرف .. الرجاء إدخال المعرف الصحيح" });
-            }
             const existingUser = await student_model.findOne({ national_ID: new_national_ID });
             if (existingUser) {
                 return res.status(403).send({
                     error: "الطالب موجود بالفعل يرجي ادخال رقم قومي اخر"
                 });
             }
-
+            const purposed_student = await student_model.findById(student_ID);
+            if (!purposed_student) {
+                return res.status(404).send({ message: "لم يتم العثور على الطالب بهذا المعرف .. الرجاء إدخال المعرف الصحيح" });
+            }
             const updated_student = await student_model.findByIdAndUpdate(student_ID, {...req.body}, { new: true });
             res.status(200).json({ status: "تم التعديل بنجاح", data: updated_student });
         } catch (error) {

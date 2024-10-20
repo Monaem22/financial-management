@@ -4,7 +4,6 @@ const dbConnection = require("./config/DB_connection");
 const dotenv = require("dotenv");
 const Routes = require("./routes/index ");
 const cookieParser = require('cookie-parser');
-const { date } = require("joi");
 
 
 port = process.env.PORT || 4444;

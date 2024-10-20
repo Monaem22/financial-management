@@ -21,7 +21,7 @@ const branches_Controller = {
     },
     get_all_branches: async (req, res) => {
         try {
-            const all_branches = await branches_model.find().populate("courses");
+            const all_branches = await branches_model.find().populate("courses" , "name");
             if (all_branches.length === 0) {
                 return res.status(404).send({ message: " لم يتم العثور على اي فروع" });
             }
