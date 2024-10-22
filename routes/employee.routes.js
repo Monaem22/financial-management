@@ -31,6 +31,5 @@ router.put("/update_employee/:employee_ID", employee_Controller.update_employee)
 
 router.get("/search_On_student", employee_Controller.search_On_student);
 router.get("/search_On_employee", employee_Controller.search_On_employee);
-router.get("/search_On_student_by_name", employee_Controller.search_On_student_by_name);
 
 module.exports = router

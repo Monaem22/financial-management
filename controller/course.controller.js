@@ -115,7 +115,7 @@ const course_Controller = {
                     error: "تم الاضافه بالفعل لذلك الطالب في هذا الكورس من قبل" 
                 });
             }
-
+            req.body.withdrawal = false ;
             req.params.student_ID = purposed_student._id ;
             req.body.expenses = purposed_course.cost;
             req.body.expenses_name = purposed_course.name;
@@ -141,7 +141,6 @@ const course_Controller = {
                     error: "لم يتم العثور على الكورس بهذا المعرف .. الرجاء إدخال المعرف الصحيح"
                 });
             }
-
             const purposed_student = await student_model.findOne({
                 Name : student_name , national_ID : student_national_ID
             });
@@ -149,12 +148,10 @@ const course_Controller = {
                 return res.status(404).send({
                     error: "لم يتم العثور على الطالب بهذا الاسم والرقم القومي " });
             } 
-
             if (!purposed_course.students.includes(purposed_student._id)) {
                 return res.status(404).send({ 
                     error: " لم يتم العثور على الطالب بهذا الاسم والرقم القومي او تم سحب اوراقه من قبل" });
             }
-
             req.params.student_ID = purposed_student._id ;
             req.body.payment = purposed_course.cost; // الفلوس اللي الطالب هيسترجعها
 
@@ -175,7 +172,6 @@ const course_Controller = {
                 payment : purposed_course.cost ,
                 action : message
             });
-            
             req.user.flag = true ;
             req.userwithdrawals_string = "تم سحب اوراق الطالب واسترجاع فلوسه" ;
 
@@ -184,7 +180,6 @@ const course_Controller = {
                 subject: ` تم سحب اوراق الطالب : ${purposed_student.Name} `,
                 text: message,
             });
-
             next();
 
             // purposed_student.Remaining_payment -=parseInt(purposed_course.cost) ;

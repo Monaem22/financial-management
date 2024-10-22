@@ -10,6 +10,7 @@ const course_Schema = new mongoose.Schema({
     cost: {
         type: Number,
         trim: true,
+        required: true,
     },
     description: String,
     Number_of_hours: String,

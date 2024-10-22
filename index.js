@@ -4,12 +4,15 @@ const dbConnection = require("./config/DB_connection");
 const dotenv = require("dotenv");
 const Routes = require("./routes/index ");
 const cookieParser = require('cookie-parser');
+const cors = require("cors");
 
 
 port = process.env.PORT || 4444;
 dotenv.config(); 
 dbConnection();
  
+// app.use(cors());
+// app.options( "*", cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

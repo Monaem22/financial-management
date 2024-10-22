@@ -20,6 +20,7 @@ const employee_Controller = {
             }
             const new_student = await student_model.create({branch : req.user.branch , ...req.body });
             res.status(200).json({ status: "is created successfully", data: new_student });
+            // res.redirect("/employee/get_All_Students_for_All_Branches");
         } catch (error) {
             res.status(500).json({ status: "failed", message: error.message });
         }
@@ -221,6 +222,8 @@ const employee_Controller = {
                 number_of_employees : employees_count,
                 all_employees: all_employees 
             });
+            // res.redirect(req.originalUrl);
+            // res.redirect("/employee");
         } catch (error) {
             res.status(500).json({ status: "failed", message: error.message });
         }
@@ -359,7 +362,6 @@ const employee_Controller = {
                 purposed_student.Remaining_payment = expenses_int - purposed_student.balance;
                 purposed_student.balance = 0;
             }
-
             purposed_student.recent_expenses = expenses;
             purposed_student.expenses_name = expenses_name;
             purposed_student.times_of_expenses += 1;
@@ -374,6 +376,7 @@ const employee_Controller = {
             await sysAction_Model.create({
                 student : student_ID ,
                 employee: req.user._id,
+                papers_withdrawal : req.body.withdrawal || null ,
                 branch: req.user.branch ,
                 expenses : expenses_int ,
                 action: ` ${req.user.email} this user made a expenses of ${expenses} to 
@@ -390,35 +393,11 @@ const employee_Controller = {
                  "دفع المصاريف لاجل" : purposed_student.expenses_name ,
 
              });
-
         } catch (error) {
             res.status(500).json({ status: "failed", message: error.message });
         }
     },
     //////////////////
-     search_On_student: async (req, res) => {
-        try {
-            const { search } = req.body;
-            if (!search) {
-                return res.status(404).send({ message: "enter the Name or national_ID you want to search" })
-            }
-            const search_int = parseInt(search)
-            const search_On_student = await student_model.find({
-                    // national_ID: { $regex: search_int } ,
-                    national_ID: search_int
-            })
-            if (search_On_student.length === 0) {
-                return res.status(404).send({
-                    message:
-                        "there is no student found with this national_ID"
-                })
-            }
-            res.status(200).send(search_On_student);
-
-        } catch (error) {
-            res.status(500).send({ message: error.message })
-        }
-    },
     search_On_employee: async (req, res) => {
         try {
             const { search } = req.body;
@@ -440,14 +419,16 @@ const employee_Controller = {
             res.status(500).send({ message: error.message })
         }
     },    
-    search_On_student_by_name: async (req, res) => {
+    search_On_student: async (req, res) => {
         try {
             const { search } = req.body;
             if (!search) {
                 return res.status(404).send({ message: "enter the Name you want to search" })
             }
-            const search_On_student = await student_model.find({
-                Name: { $regex: search, $options: "i" }
+            const search_On_student = await student_model.find({$or: [
+                { Name: { $regex: search, $options: "i" } },
+                { national_ID: { $regex: search, $options: "i" } } 
+            ]
             })
             if (search_On_student.length === 0) {
                 return res.status(404).send({

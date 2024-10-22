@@ -19,7 +19,6 @@ const sysActions_Schema = new mongoose.Schema({
     },
     papers_withdrawal : {
         type: Boolean,
-        default: false
     },
     payment: {
         type: Number,

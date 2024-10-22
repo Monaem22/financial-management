@@ -1,4 +1,3 @@
-const { date } = require("joi");
 const mongoose = require("mongoose");
 
 const student_Schema = new mongoose.Schema({
@@ -39,12 +38,13 @@ const student_Schema = new mongoose.Schema({
     
     Name: {
         type: String,
-        // required: true,
+        required: true,
     },
     national_ID: {
-        type: Number,
+        type: String,
         trim: true,
-        // required: true,
+        required: true,
+        unique: true ,
     },
     Year_of_qualification: {
         type: String,
