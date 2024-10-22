@@ -18,7 +18,9 @@ const employee_Controller = {
                     error: "الطالب موجود بالفعل"
                 });
             }
-            const new_student = await student_model.create({branch : req.user.branch , ...req.body });
+            // const new_student = await student_model.create({branch : req.user.branch , ...req.body });
+            const new_student = await student_model.create({ ...req.body });
+
             res.status(200).json({ status: "is created successfully", data: new_student });
             // res.redirect("/employee/get_All_Students_for_All_Branches");
         } catch (error) {

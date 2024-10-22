@@ -4,7 +4,7 @@ const { authentication, adminAuthorization } = require("../middleware/auth.middl
 const uploading = require("../middleware/uploud.middleware");
 
 //student    Qualification_certificate_Uploading
-router.post("/add_student",authentication, employee_Controller.add_student);
+router.post("/add_student", employee_Controller.add_student);
 router.get("/get_student/:student_ID", employee_Controller.get_Student);
 router.get("/get_All_students_with_Custom_Academic_year",authentication, 
     employee_Controller.get_All_students_with_Custom_Academic_year);
